@@ -27,3 +27,5 @@ target/
 .vscode/
 .classpath
 .project
+
+.idea/
