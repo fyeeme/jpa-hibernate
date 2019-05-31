@@ -1,5 +1,7 @@
 package com.flyme.app;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -12,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class App {
-    private final static Logger LOGGER = LoggerFactory.getLogger("Flyme");
+    private final static Logger logger = LoggerFactory.getLogger("Flyme");
     private EntityManagerFactory entityManagerFactory = null;
     private EntityManager entityManager = null;
 
@@ -20,11 +22,12 @@ public class App {
         App app = new App();
 
         app.initEntityManager();
-        app.persistPsersion();
+        app.persistPerson();
         app.persistGeek();
+        app.queryGeeks();
     }
 
-    private void persistPsersion() {
+    private void persistPerson() {
         EntityTransaction transaction = entityManager.getTransaction();
 
         try {
@@ -46,16 +49,23 @@ public class App {
         }
     }
 
+    private void queryGeeks(){
+      List<Geek> list =   entityManager.createQuery("from Geek", Geek.class).getResultList();
+        list.forEach(geek-> {
+            logger.info( geek.getFirstName() + " " + geek.getLastName()+ "\n");
+        });
+    }
+
     void initEntityManager() {
         entityManagerFactory = Persistence.createEntityManagerFactory("JpaHibernate");
         entityManager = entityManagerFactory.createEntityManager();
-        LOGGER.info("Initialization entityManager");
+        logger.info("Initialization entityManager");
     }
 
     /**
      * 为了代码整洁省略try catch
      */
-    void persistGeek(){
+    void persistGeek() {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
 
@@ -66,7 +76,7 @@ public class App {
         geek.setPragramLanage("Java");
         geek.setAge(18);
         geek.setAddress("New York");
-        
+
         entityManager.persist(geek);
 
         geek = new Geek();
@@ -82,7 +92,7 @@ public class App {
         geek.setPragramLanage("Java");
         entityManager.persist(geek);
 
-        System.out.println(entityManager.createQuery("select g from Geek g where id =2").getResultList());
+        logger.info(entityManager.createQuery("select g from Geek g where id =2").getResultList()+ "");
 
         transaction.commit();
     }
