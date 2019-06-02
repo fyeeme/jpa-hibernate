@@ -18,6 +18,63 @@
 
 * OneToOne: 每一个entity与其他entity一一对应
 * OneToMany / ManyToOne: 一对多或者多对一
-* ManyToMany: 多对多
-* Embedded: 多个entity 映射到一张表
+* ManyToMany: 多对多 通过创建中间表关联两个entity之间的关系
+* Embedded: 多个entity 映射到一张表 
 * ElementCollection: 与 `OneToMany` 相似，但是引用的entity是`Embedded`类型
+
+
+4. 类型映射
+
+
+| Java type                                                                            | Database type                              |
+| ------------------------------------------------------------------------------------ | ------------------------------------------ |
+| String (char, char[])                                                                | VARCHAR (CHAR, VARCHAR2, CLOB, TEXT)       |
+| Number (BigDecimal, BigInteger, Integer, Double, Long, Float, Short, Byte)           | NUMERIC (NUMBER, INT, LONG, FLOAT, DOUBLE) |
+| int, long, float, double, short, byte                                                | NUMERIC (NUMBER, INT, LONG, FLOAT, DOUBLE) |
+| byte[]                                                                               | VARBINARY (BINARY, BLOB)                   |
+| boolean (Boolean)                                                                    | BOOLEAN (BIT, SMALLINT, INT, NUMBER)       |
+| java.util.Date, java.sql.Date, java.sql.Time, java.sql.Timestamp, java.util.Calendar | TIMESTAMP (DATE, DATETIME)                 |
+| java.lang.Enum                                                                       | NUMERIC (VARCHAR, CHAR)                    |
+| java.lang.Enum                                                                       | NUMERIC (VARCHAR, CHAR)                    |
+| java.util.Serializable                                                               | VARBINARY (BINARY, BLOB)                   |
+	
+这里面 enum 类型比较有趣， 在处理enum类型是，jpa提供了两种方式处理：
+
+    @Enumerated(EnumType.ORDINAL) 将enum存储为数字类型，其数据库中存储的值按照索引从0开始
+
+    @Enumerated(EnumType.STRING) 将enum存储为`VARCHAR`类型，其数据库存储的值为实际enum的值
+
+    如果两种都不满意，jpa提供了`AttributeConverter`属性转换器，通过`@Converter`注解中指定转换器的名字自定义，示例如下：
+
+```java
+@Converter
+public class BooleanConverter implements AttributeConverter<Boolean, Integer> {
+ 
+    @Override
+    public Integer convertToDatabaseColumn(Boolean aBoolean) {
+        if (Boolean.TRUE.equals(aBoolean)) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+ 
+    @Override
+    public Boolean convertToEntityAttribute(Integer value) {
+        if (value == null) {
+            return Boolean.FALSE;
+        } else {
+            if (value == 1) {
+                return Boolean.TRUE;
+            } else {
+                return Boolean.FALSE;
+            }
+        }
+    }
+}
+
+...
+@Column(name = "VALID")
+@Convert(converter = BooleanConverter.class)
+private boolean valid;
+```

@@ -3,12 +3,15 @@ package com.flyme.app.entity;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.flyme.app.converter.BooleanConverter;
 
 @Entity
 public class IdCard {
@@ -20,6 +23,9 @@ public class IdCard {
     @Column(name = "issue_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date issueDate;
+
+    @Convert(converter = BooleanConverter.class)
+    private Boolean valid;
 
     public Long getId() {
         return Id;
@@ -49,5 +55,14 @@ public class IdCard {
     public String toString() {
         return "IdCard [Id=" + Id + ", idNumber=" + idNumber + ", issueDate=" + issueDate + "]";
     }
+
+    public Boolean getValid() {
+        return valid;
+    }
+
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
+    
 
 }

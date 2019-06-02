@@ -1,6 +1,8 @@
 package com.flyme.app;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -13,6 +15,7 @@ import javax.persistence.criteria.Root;
 
 import com.flyme.app.entity.Geek;
 import com.flyme.app.entity.IdCard;
+import com.flyme.app.entity.Period;
 import com.flyme.app.entity.Person;
 import com.flyme.app.entity.Phone;
 import com.flyme.app.entity.Project;
@@ -44,6 +47,15 @@ public class App {
 
         Project project = new Project();
         project.setName("Java project");
+        project.setProjectType(Project.ProjectType.FIXED);
+
+        Period period = new Period();
+        GregorianCalendar calendar =   new GregorianCalendar();
+        calendar.set(Calendar.YEAR, 2000);
+        period.setStartDate(new Date(calendar.getTimeInMillis()));
+        period.setEndDate(new Date());
+        project.setProjectPeriod(period);
+        project.getProjectPeriods().add(period);
         list.forEach(geek->{
             project.getGeeks().add(geek);
             geek.getProjects().add(project);
@@ -91,6 +103,7 @@ public class App {
             IdCard idCard = new IdCard();
             idCard.setIdNumber("100000100000100");
             idCard.setIssueDate(new Date());
+            idCard.setValid(false);
 
             person.setIdCard(idCard);
 
@@ -108,18 +121,20 @@ public class App {
     private void queryGeeks() {
         List<Geek> list = entityManager.createQuery("from Geek", Geek.class).getResultList();
         list.forEach(geek -> {
-            logger.info(geek.getFirstName() + " " + geek.getLastName() + geek.getProjects()+"\n");
+            logger.info("Get geek : "+ geek.getFirstName() + " " + geek.getLastName() + geek.getProjects()+"\n");
         });
 
         List<Project> projectList = entityManager.createQuery("from Project", Project.class).getResultList();
 
         projectList.forEach(project->{
-            logger.info(project.toString()+ "\n");
+            logger.info("Get project: " + project.toString()+ "\n");
         });
 
         Person person = entityManager.find(Person.class, 1L);
 
         logger.info("Find persion : "+ person);
+
+
 
     }
 
