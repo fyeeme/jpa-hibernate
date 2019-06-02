@@ -12,3 +12,12 @@
     @Inheritance(strategy = InheritanceType.JOINED)    每个entity都有自己的独立的映射表，不过每个entity仅包含自己定义的字段，查询时jpa会`join`所有需要的表。 优点是节省存储空间，缺点是查询有牺牲。
 
     @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)   每个entity会将自身以及继承的属性映射到自己表, 不过由于对象是继承关系，继承的对象公用主键。因此`id`不能重复，需要修改Id的注解策略。`@GeneratedValue(strategy = GenerationType.IDENTITY)` -> `@GeneratedValue(strategy = GenerationType.TABLE)`
+
+
+3. Relationships
+
+* OneToOne: 每一个entity与其他entity一一对应
+* OneToMany / ManyToOne: 一对多或者多对一
+* ManyToMany: 多对多
+* Embedded: 多个entity 映射到一张表
+* ElementCollection: 与 `OneToMany` 相似，但是引用的entity是`Embedded`类型
