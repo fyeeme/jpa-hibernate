@@ -78,3 +78,20 @@ public class BooleanConverter implements AttributeConverter<Boolean, Integer> {
 @Convert(converter = BooleanConverter.class)
 private boolean valid;
 ```
+
+5. Criteria API
+    
+通过`Criteria API` 我们可以使用 `JPQL`去查询数据库，而`JPQL`是与数据库具体实现无关的，因此我们可以通过它很容易实现跨数据库的应用程序，示例如下：
+
+```java
+CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+CriteriaQuery<Person> query = builder.createQuery(Person.class);
+
+Root<Person> personRoot = query.from(Person.class);
+query.where(builder.equal(personRoot.get("firstName"), "Homer"));
+List<Person> resultList = entityManager.createQuery(query).getResultList();
+```
+    
+
+6[参考链接 ](https://www.javacodegeeks.com/2015/02/jpa-tutorial.html#entitymanager)

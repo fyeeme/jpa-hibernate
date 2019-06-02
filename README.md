@@ -71,3 +71,7 @@ mvn archetype:generate -DgroupId=com.flyme.app -DartifactId=jpa-hibernate -Darch
     </pluginManagement>
 </build>
 ```
+
+4. Document 
+
+    [ project document notes about jpa](doc/index.md)
